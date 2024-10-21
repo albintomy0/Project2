@@ -6,7 +6,7 @@ package project2software;
 
 /**
  *
- * @author Albin Tomy
+ * @author Albin and Ekansh
  */
 public class Project2Software {
 
