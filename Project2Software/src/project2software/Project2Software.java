@@ -17,6 +17,7 @@ public class Project2Software {
         // TODO code application logic here
         
         System.out.println("First message");
+        System.out.println("Second message-EK");
     }
     
 }
