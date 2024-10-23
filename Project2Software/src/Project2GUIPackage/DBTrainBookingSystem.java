@@ -33,7 +33,6 @@ public class DBTrainBookingSystem {
 
             this.statement.addBatch("INSERT INTO TrainData VALUES "
                     + "('T003', 'Wellington', 100, 45.00, '07:45'), "
-                    + "('T001', 'Auckland', 100, 35.00, '08:00'), "
                     + "('T002', 'Hamilton', 100, 25.00, '09:30'), "
                     + "('T004', 'Tauranga', 80, 40.00, '10:15'), "
                     + "('T006', 'Hamilton', 80, 30.00, '11:00'), "

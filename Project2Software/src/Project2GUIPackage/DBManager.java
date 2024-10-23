@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public final class DBManager {
     // Embedded mode URL, creates the TrainDB if it doesn't exist
-    private static final String URL = "jdbc:derby:testy1;create=true";
+    private static final String URL = "jdbc:derby:DBGUI2;create=true";
 
     Connection conn;
 

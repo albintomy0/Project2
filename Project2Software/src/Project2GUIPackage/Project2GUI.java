@@ -4,7 +4,17 @@
  */
 package Project2GUIPackage;
 
+import java.awt.Button;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 /**
  *
@@ -12,11 +22,85 @@ import javax.swing.JFrame;
  */
 public class Project2GUI extends javax.swing.JFrame {
 
-    /**
-     * Creates new form Project2GUI
-     */
+    // New buttons for the options
+    private JButton viewTrainsButton;
+    private JButton chooseDestinationButton;
+    private JPanel buttonPanel;
+
     public Project2GUI() {
         initComponents();
+        addOptionButtons();  // Add this to initialize your new buttons
+    }
+
+    // This is where we add the buttons
+    private void addOptionButtons() {
+        viewTrainsButton = new JButton("View Trains");
+        chooseDestinationButton = new JButton("Choose Destination");
+
+        // Add action listeners to the buttons
+        viewTrainsButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                viewTrainsActionPerformed(evt);
+            }
+        });
+
+        chooseDestinationButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                chooseDestinationActionPerformed(evt);
+            }
+        });
+
+        // Create a panel to hold the buttons
+        buttonPanel = new JPanel();
+        buttonPanel.add(viewTrainsButton);
+        buttonPanel.add(chooseDestinationButton);
+
+        // Add the button panel below the existing components
+        getContentPane().add(buttonPanel, java.awt.BorderLayout.SOUTH);
+
+        // Resize the window to accommodate the new buttons
+        pack();
+    }
+
+    // Define what happens when the "View Trains" button is pressed
+    private void viewTrainsActionPerformed(ActionEvent evt) {
+        System.out.println("View Trains button pressed");
+        // Open a new window showing the available trains
+        ViewTrainsFrame viewTrainsFrame = new ViewTrainsFrame(); // Call to open the new frame
+    }
+
+    class ViewTrainsFrame extends JFrame {
+
+    public ViewTrainsFrame() {
+        setTitle("Available Trains");
+        setSize(500, 400);
+        setLocationRelativeTo(null); // Center the frame
+
+        JTextArea trainDataTextArea = new JTextArea();
+        trainDataTextArea.setEditable(false); // Read-only text area
+
+        // Read train data from trains.txt
+        try (BufferedReader reader = new BufferedReader(new FileReader("src/Project2GUIPackage/trains.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                trainDataTextArea.append(line + "\n");
+            }
+        } catch (IOException e) {
+            trainDataTextArea.setText("Error reading train data.");
+        }
+
+        JScrollPane scrollPane = new JScrollPane(trainDataTextArea); // Add scrolling capability
+        add(scrollPane);
+
+        setVisible(true);
+    }
+}
+
+
+    // Define what happens when the "Choose Destination" button is pressed
+    private void chooseDestinationActionPerformed(ActionEvent evt) {
+        System.out.println("Choose Destination button pressed");
+        // Add functionality for choosing destination here
     }
 
     /**
@@ -28,103 +112,96 @@ public class Project2GUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel2 = new javax.swing.JPanel();
-        label1 = new java.awt.Label();
-        label2 = new java.awt.Label();
-        jTextField1 = new javax.swing.JTextField();
-        button1 = new java.awt.Button();
-        jTextField2 = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Login"));
-
-        label1.setText("Username");
-
-        label2.setText("Password");
-
-        button1.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Blue"));
-        button1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        button1.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
-        button1.setLabel("Login");
-        button1.setName("LoginButton"); // NOI18N
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(214, 214, 214)
-                .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(169, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(label2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE)
-                        .addGap(168, 168, 168))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(44, 44, 44)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(label2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
-                .addComponent(button1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(22, 22, 22))
-        );
-
-        label1.getAccessibleContext().setAccessibleName("Username_Label");
-        label2.getAccessibleContext().setAccessibleDescription("Password_Label");
-        jTextField1.getAccessibleContext().setAccessibleName("UserName_TextField");
-        button1.getAccessibleContext().setAccessibleName("Login_Button");
-        jTextField2.getAccessibleContext().setAccessibleName("Password_TextField");
-        jTextField2.getAccessibleContext().setAccessibleDescription("");
-
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Project2GUIPackage/train_1 (1).png"))); // NOI18N
-        jLabel1.setText("WELCOME to Auckland Train Booking System");
+        jLabel1.setText("WELCOME \nto Auckland Train Booking System");
         jLabel1.setToolTipText("");
         jLabel1.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jLabel1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("What Would you like to do today?"));
+        jPanel1.setToolTipText("");
+
+        jButton1.setText("1. View Trains");
+        jButton1.setActionCommand("viewTrainsButton ");
+        jButton1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+
+        jButton2.setText("2. Choose Destination");
+        jButton2.setActionCommand("chooseDestinationButton");
+
+        jLabel2.setText("Username");
+
+        jLabel3.setText("Password");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(32, 32, 32)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton2)
+                    .addComponent(jButton1))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap(19, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jLabel2))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton2)
+                    .addComponent(jLabel3))
+                .addGap(28, 28, 28))
+        );
+
+        jButton1.getAccessibleContext().setAccessibleName("viewTrainsButton ");
+        jButton2.getAccessibleContext().setAccessibleName("chooseDestinationButton");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(24, 24, 24)
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 494, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(35, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(25, 25, 25)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
+        jPanel1.getAccessibleContext().setAccessibleName("buttonPanel");
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
+//
 
     /**
      * @param args the command line arguments
@@ -164,12 +241,11 @@ public class Project2GUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private java.awt.Button button1;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private java.awt.Label label1;
-    private java.awt.Label label2;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }

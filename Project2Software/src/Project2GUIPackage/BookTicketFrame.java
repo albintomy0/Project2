@@ -9,7 +9,7 @@ import java.awt.event.FocusEvent;
 
 public class BookTicketFrame extends JFrame implements ActionListener {
 
-    private JComboBox<String> fromDropdown;
+    private JComboBox<String> toDropdown;
     private JTextField dayField, monthField, yearField;
     private JSpinner ticketsSpinner;
     private JButton backButton, bookButton, quitButton;
@@ -26,16 +26,16 @@ public class BookTicketFrame extends JFrame implements ActionListener {
 
     public void initComponents() {
         // Initialize the components
-        backButton = new JButton("Back");
+        backButton = new JButton("BACK");
         bookButton = new JButton("BOOK TICKET(s)");
         quitButton = new JButton("Quit");
-        
+
         backButton.setToolTipText("Go back to the main menu.");
         bookButton.setToolTipText("Proceed with booking the ticket.");
         quitButton.setToolTipText("Exit the system.");
 
         // Title label
-        titleLabel = new JLabel("AUCKLAND TRAIN BOOKING SYSTEM");
+        titleLabel = new JLabel("BOOK TICKET");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
 
         // Date fields
@@ -47,15 +47,16 @@ public class BookTicketFrame extends JFrame implements ActionListener {
         ticketsSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 10, 1));
 
         // Destination dropdown
-        fromDropdown = new JComboBox<>(locations);
+        toDropdown = new JComboBox<>(locations);
 
         // Set frame properties
-        setTitle("Book Ticket");
-        setSize(500, 400);
+        setTitle("AUCKLAND TRAIN BOOKING SYSTEM");
+        setSize(400, 350);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new GridBagLayout());
         setResizable(false);
         setLocationRelativeTo(null);  // Center the book ticket frame
+        getContentPane().setBackground(new Color(192, 210, 238));  // Set background color
     }
 
     public void initPanels() {
@@ -98,7 +99,7 @@ public class BookTicketFrame extends JFrame implements ActionListener {
         gbc.gridx = 1;
         gbc.gridy = 2;
         gbc.gridwidth = 2;
-        add(fromDropdown, gbc);
+        add(toDropdown, gbc);
 
         // Departure date label and fields
         JLabel dateLabel = new JLabel("Departure Date:");
@@ -111,6 +112,7 @@ public class BookTicketFrame extends JFrame implements ActionListener {
         datePanel.add(dayField);
         datePanel.add(monthField);
         datePanel.add(yearField);
+        datePanel.setBackground(new Color(192, 210, 238));  // Background color for panel
         addDateFieldListeners();
 
         gbc.gridx = 1;
@@ -128,16 +130,16 @@ public class BookTicketFrame extends JFrame implements ActionListener {
         gbc.gridy = 4;
         add(ticketsSpinner, gbc);
 
-        // Book ticket button
+        // Buttons at the bottom
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        buttonPanel.add(quitButton);
+        buttonPanel.add(bookButton);
+        buttonPanel.setBackground(new Color(192, 210, 238));  // Background color for button panel
         gbc.gridx = 1;
         gbc.gridy = 5;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
-        add(bookButton, gbc);
-
-        // Quit button
-        gbc.gridy = 6;
-        add(quitButton, gbc);
+        add(buttonPanel, gbc);
     }
 
     public void initActionListeners() {
@@ -150,7 +152,7 @@ public class BookTicketFrame extends JFrame implements ActionListener {
 
         bookButton.addActionListener(e -> {
             // Input validation
-            if (fromDropdown.getSelectedIndex() == 0 || dayField.getText().equals("DD") || monthField.getText().equals("MM") || yearField.getText().equals("YYYY")) {
+            if (toDropdown.getSelectedIndex() == 0 || dayField.getText().equals("DD") || monthField.getText().equals("MM") || yearField.getText().equals("YYYY")) {
                 JOptionPane.showMessageDialog(this, "Please fill in all fields before booking.", "Incomplete Information", JOptionPane.WARNING_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(this, "Ticket(s) booked successfully!", "Booking Confirmed", JOptionPane.INFORMATION_MESSAGE);
@@ -185,11 +187,11 @@ public class BookTicketFrame extends JFrame implements ActionListener {
     }
 
     public static void main(String[] args) {
-        new BookTicketFrame();  // Launch the Book Ticket Frame
+        BookTicketFrame bookTicketFrame = new BookTicketFrame(); // Launch the Book Ticket Frame
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

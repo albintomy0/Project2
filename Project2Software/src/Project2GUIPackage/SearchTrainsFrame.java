@@ -3,195 +3,134 @@ package Project2GUIPackage;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import javax.swing.table.DefaultTableModel;
 
 public class SearchTrainsFrame extends JFrame {
 
-    JComboBox<String> fromDropdown;
-    JComboBox<String> toDropdown;
-    JTextField dayField, monthField, yearField;
-    String[] locations = {"Select", "Auckland", "Wellington", "Hamilton", "Tauranga", "Rotorua"};
+    private JTable trainTable;
+    private DefaultTableModel tableModel;
+    private JButton backButton, selectTrainButton, quitButton;
+    private JLabel titleLabel;
 
     public SearchTrainsFrame() {
-        // Set up the frame
-        setTitle("Search Trains");
-        setSize(500, 400);
+        // Initialize components and set up frame
+        initComponents();
+        initPanels();
+        initListeners();
+        setVisible(true);
+    }
+
+    public void initComponents() {
+        // Initialize buttons
+        backButton = new JButton("BACK");
+        selectTrainButton = new JButton("Select Train");
+        quitButton = new JButton("Quit");
+
+        backButton.setToolTipText("Go back to the main menu.");
+        selectTrainButton.setToolTipText("Select the train you want.");
+        quitButton.setToolTipText("Exit the system.");
+
+        // Title label
+        titleLabel = new JLabel("AVAILABLE TRAINS", SwingConstants.CENTER); // Centering the label text
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
+
+        // Table setup
+        String[] columnNames = {"Ticket ID", "City", "Seats", "Price", "Time"};
+        tableModel = new DefaultTableModel(columnNames, 0);
+        trainTable = new JTable(tableModel);
+        trainTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // Single selection
+
+        // Frame properties
+        setTitle("AUCKLAND TRAIN BOOKING SYSTEM");
+        setSize(600, 400);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new GridBagLayout());
+        setResizable(false);
+        setLocationRelativeTo(null);  // Center the frame
+        getContentPane().setBackground(new Color(192, 210, 238));  // Set background color to light blue
+    }
 
+    public void initPanels() {
+        // Set up layout and positioning
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.anchor = GridBagConstraints.WEST;
 
         // Back button
-        JButton backButton = new JButton("Back");
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 1;
         add(backButton, gbc);
 
-        // Back button action to go back to the main welcome screen
-        backButton.addActionListener(e -> {
-            new GUIProject2();  // Go back to the welcome screen
-            dispose();  // Close the current window
-        });
-
-        // Search Trains label
-        JLabel titleLabel = new JLabel("SEARCH TRAINS");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        gbc.gridx = 1;
+        // Title label - span across all columns to center
+        gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridwidth = 2;
+        gbc.gridwidth = 3;
         gbc.anchor = GridBagConstraints.CENTER;
         add(titleLabel, gbc);
 
-        // From label and dropdown
-        gbc.anchor = GridBagConstraints.WEST;
-        JLabel fromLabel = new JLabel("From");
+        // Train table with scroll pane
         gbc.gridx = 0;
         gbc.gridy = 1;
-        add(fromLabel, gbc);
+        gbc.gridwidth = 4;  // Span across 4 columns for the table
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        JScrollPane scrollPane = new JScrollPane(trainTable);
+        add(scrollPane, gbc);
 
-        fromDropdown = new JComboBox<>(locations);
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        add(fromDropdown, gbc);
-
-        // To label and dropdown
-        JLabel toLabel = new JLabel("To");
-        gbc.gridx = 2;
-        gbc.gridy = 1;
-        add(toLabel, gbc);
-
-        toDropdown = new JComboBox<>(locations);
-        gbc.gridx = 3;
-        gbc.gridy = 1;
-        add(toDropdown, gbc);
-
-        // Action to remove selected location from the other dropdown
-        fromDropdown.addActionListener(e -> updateToDropdown());
-        toDropdown.addActionListener(e -> updateFromDropdown());
-
-        // Departure date label
-        JLabel departLabel = new JLabel("Depart on");
-        gbc.gridx = 0;
+        // Select train button
         gbc.gridy = 2;
-        add(departLabel, gbc);
-
-        // Date fields (DD/MM/YYYY)
-        JPanel datePanel = new JPanel();
-        dayField = new JTextField("DD", 2);
-        monthField = new JTextField("MM", 2);
-        yearField = new JTextField("YYYY", 4);
-        datePanel.add(dayField);
-        datePanel.add(monthField);
-        datePanel.add(yearField);
-
-        addDateFieldListeners();  // Call the method to clear date fields on focus
-
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        gbc.gridwidth = 2;
-        add(datePanel, gbc);
-
-        // Number of tickets label and spinner
-        JLabel ticketsLabel = new JLabel("No. of tickets:");
-        gbc.gridx = 0;
-        gbc.gridy = 3;
         gbc.gridwidth = 1;
-        add(ticketsLabel, gbc);
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.CENTER;
+        add(selectTrainButton, gbc);
 
-        JSpinner ticketSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 10, 1));
-        gbc.gridx = 1;
-        gbc.gridy = 3;
-        add(ticketSpinner, gbc);
-
-        // Find Tickets button
-        JButton findTicketsButton = new JButton("FIND TICKETS");
+        // Quit button
         gbc.gridx = 2;
-        gbc.gridy = 4;
-        gbc.gridwidth = 2;
-        add(findTicketsButton, gbc);
-
-        // Display the frame
-        setVisible(true);
+        gbc.gridy = 2;
+        gbc.gridwidth = 1;
+        add(quitButton, gbc);
     }
 
-    // Update the "To" dropdown by removing the selected "From" location
-    private void updateToDropdown() {
-        String selectedFrom = (String) fromDropdown.getSelectedItem();
-        toDropdown.removeAllItems();
+    public void initListeners() {
+        // Add action listeners for buttons
+        backButton.addActionListener(e -> {
+            new GUIProject2();
+            dispose();  // Close current window
+        });
 
-        for (String location : locations) {
-            if (!location.equals(selectedFrom)) {
-                toDropdown.addItem(location);  // Only exclude the "From" location
+        selectTrainButton.addActionListener(e -> {
+            int selectedRow = trainTable.getSelectedRow();
+            if (selectedRow != -1) {
+                String ticketId = tableModel.getValueAt(selectedRow, 0).toString();
+                JOptionPane.showMessageDialog(this, "Train selected: " + ticketId);
+            } else {
+                JOptionPane.showMessageDialog(this, "Please select a train.");
             }
+        });
+
+        quitButton.addActionListener(e -> System.exit(0));  // Exit the system
+
+        loadTrainData();
+    }
+
+    private void loadTrainData() {
+        try (BufferedReader reader = new BufferedReader(new FileReader("src/Resources/trains.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] trainData = line.split(",");
+                tableModel.addRow(trainData);  // Add each train's data as a row in the table
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-    }
-
-    // Update the "From" dropdown by removing the selected "To" location
-    private void updateFromDropdown() {
-        String selectedTo = (String) toDropdown.getSelectedItem();
-        fromDropdown.removeAllItems();
-
-        for (String location : locations) {
-            if (!location.equals(selectedTo)) {
-                fromDropdown.addItem(location);  // Only exclude the "To" location
-            }
-        }
-    }
-
-    // Add listeners to date fields to remove placeholder text when focused
-    private void addDateFieldListeners() {
-        dayField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                if (dayField.getText().equals("DD")) {
-                    dayField.setText("");
-                }
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                if (dayField.getText().isEmpty()) {
-                    dayField.setText("DD");
-                }
-            }
-        });
-
-        monthField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                if (monthField.getText().equals("MM")) {
-                    monthField.setText("");
-                }
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                if (monthField.getText().isEmpty()) {
-                    monthField.setText("MM");
-                }
-            }
-        });
-
-        yearField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                if (yearField.getText().equals("YYYY")) {
-                    yearField.setText("");
-                }
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                if (yearField.getText().isEmpty()) {
-                    yearField.setText("YYYY");
-                }
-            }
-        });
     }
 
     public static void main(String[] args) {
-        new SearchTrainsFrame();  // For standalone testing
+        new SearchTrainsFrame();
     }
 }
