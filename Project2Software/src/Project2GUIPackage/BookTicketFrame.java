@@ -27,7 +27,7 @@ public class BookTicketFrame extends JFrame implements ActionListener {
     public void initComponents() {
         // Initialize the components
         backButton = new JButton("BACK");
-        bookButton = new JButton("BOOK TICKET(s)");
+        bookButton = new JButton("Book Ticket(s)");
         quitButton = new JButton("Quit");
 
         backButton.setToolTipText("Go back to the main menu.");

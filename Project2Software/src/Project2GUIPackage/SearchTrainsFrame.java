@@ -3,9 +3,7 @@ package Project2GUIPackage;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.sql.*;
 import javax.swing.table.DefaultTableModel;
 
 public class SearchTrainsFrame extends JFrame {
@@ -20,6 +18,7 @@ public class SearchTrainsFrame extends JFrame {
         initComponents();
         initPanels();
         initListeners();
+        loadTrainDataFromDB();  // Load train data from the database
         setVisible(true);
     }
 
@@ -114,19 +113,48 @@ public class SearchTrainsFrame extends JFrame {
         });
 
         quitButton.addActionListener(e -> System.exit(0));  // Exit the system
-
-        loadTrainData();
     }
 
-    private void loadTrainData() {
-        try (BufferedReader reader = new BufferedReader(new FileReader("src/Resources/trains.txt"))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] trainData = line.split(",");
-                tableModel.addRow(trainData);  // Add each train's data as a row in the table
+    // Load data from the TRAINDATA table in the Derby database
+    private void loadTrainDataFromDB() {
+        Connection conn = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            // Establish a connection to the database
+            conn = DriverManager.getConnection("jdbc:derby://localhost:1527/DBGUI2", "app", "app");
+
+            // Create a statement
+            stmt = conn.createStatement();
+
+            // Execute a query to retrieve all data from the TRAINDATA table
+            String sql = "SELECT * FROM TRAINDATA";
+            rs = stmt.executeQuery(sql);
+
+            // Loop through the result set and add rows to the table model
+            while (rs.next()) {
+                String ticketId = rs.getString("TICKET_ID");
+                String city = rs.getString("CITY");
+                int seatNumber = rs.getInt("SEAT_NUMBER");
+                double price = rs.getDouble("PRICE");
+                String time = rs.getString("TIME");
+
+                // Add each train's data as a row in the table
+                tableModel.addRow(new Object[]{ticketId, city, seatNumber, price, time});
             }
-        } catch (IOException e) {
+
+        } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            // Close the database resources
+            try {
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
