@@ -2,84 +2,85 @@ package Project2GUIPackage;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-public final class GUIProject2 extends JFrame implements ActionListener {
+public class GUIProject2 extends JFrame {
 
-    private JButton viewTrainsButton, bookTicketsButton, quitButton;
-    private JLabel trainImageLabel, welcomeLabel;
+    private JButton viewTrainsButton, quitButton;
 
     public GUIProject2() {
-        // Initialize components, panels, and action listeners
+        // Initialize components
         initComponents();
-        initPanels();
-        initActionListeners();
+        initListeners();
         setVisible(true);
     }
 
-    public void initComponents() {
-        // Initialize the buttons and labels
-        viewTrainsButton = new JButton("1. View Trains");
-        bookTicketsButton = new JButton("2. Book Ticket");
-        quitButton = new JButton("Quit");
-        viewTrainsButton.setToolTipText("View available trains and their schedules.");
-        bookTicketsButton.setToolTipText("Book a train ticket.");
-        quitButton.setToolTipText("Exit the system.");
-
-        welcomeLabel = new JLabel("WELCOME to Auckland Train Booking System", SwingConstants.CENTER);
-        welcomeLabel.setFont(new Font("Serif", Font.BOLD, 18));
-
-        // Initialize image label with the train image
-        trainImageLabel = new JLabel(new ImageIcon(getClass().getResource("/Project2GUIPackage/train_1.png")));
-
-        // Set frame properties
+    private void initComponents() {
         setTitle("Auckland Train Booking System");
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new BorderLayout());
+        setLayout(new GridBagLayout());
+        setResizable(false);
         setLocationRelativeTo(null);  // Center the frame
-    }
+        getContentPane().setBackground(new Color(255, 255, 255));  // Set background color to white
 
-    public void initPanels() {
-        // Create the north panel for the image
-        JPanel northPanel = new JPanel();
-        northPanel.add(trainImageLabel);
-        this.add(northPanel, BorderLayout.NORTH);
+        // Title label
+        JLabel welcomeLabel = new JLabel("WELCOME to Auckland Train Booking System");
+        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 20));
 
-        // Create the center panel for the welcome label
-        JPanel centerPanel = new JPanel();
-        centerPanel.add(welcomeLabel);
-        this.add(centerPanel, BorderLayout.CENTER);
+        // Image of the train
+        ImageIcon trainImage = new ImageIcon("src/Resources/train_1.png");  // Path to your image
+        JLabel imageLabel = new JLabel(trainImage);
 
-        // Create a panel for buttons and add them
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setBorder(BorderFactory.createTitledBorder("What Would you like to do today?"));
+        // Buttons
+        viewTrainsButton = new JButton("1. View Trains");
+        quitButton = new JButton("Quit");
+
+        // Create a panel to hold the buttons, with FlowLayout centered
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        buttonPanel.setBackground(new Color(255, 255, 255));  // Set the same background color as the frame
         buttonPanel.add(viewTrainsButton);
-        buttonPanel.add(bookTicketsButton);
-        buttonPanel.add(quitButton);  // Add quit button to the main screen
-        this.add(buttonPanel, BorderLayout.SOUTH);
+        buttonPanel.add(quitButton);
+
+        // Layout setup
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+
+        // Add train image at the top
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        add(imageLabel, gbc);
+
+        // Add welcome message under the image
+        gbc.gridy = 1;
+        gbc.gridwidth = 2;
+        add(welcomeLabel, gbc);
+
+        // "What would you like to do?" label
+        JLabel actionLabel = new JLabel("What Would you like to do today?");
+        actionLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        gbc.gridy = 2;
+        add(actionLabel, gbc);
+
+        // Add the button panel (centered buttons) under the label
+        gbc.gridy = 3;
+        gbc.gridwidth = 2;
+        add(buttonPanel, gbc);
     }
 
-    public void initActionListeners() {
-        // Add action listeners for the buttons
-        viewTrainsButton.addActionListener(this);
-        bookTicketsButton.addActionListener(this);
-        quitButton.addActionListener(e -> System.exit(0));  // Exit the system
-    }
+    private void initListeners() {
+        // Action for "View Trains" button to navigate to SearchTrainsFrame
+        viewTrainsButton.addActionListener(e -> {
+            new SearchTrainsFrame();  // Open SearchTrainsFrame
+            dispose();  // Close the welcome screen
+        });
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == viewTrainsButton) {
-            new SearchTrainsFrame();
-            this.setVisible(false);  // Hide current frame
-        } else if (e.getSource() == bookTicketsButton) {
-            new BookTicketFrame();
-            this.setVisible(false);  // Hide current frame
-        }
+        // Action for "Quit" button to close the application
+        quitButton.addActionListener(e -> System.exit(0));
     }
 
     public static void main(String[] args) {
-        new GUIProject2();  // Launch the main frame
+        new GUIProject2();  // Launch the welcome screen
     }
 }

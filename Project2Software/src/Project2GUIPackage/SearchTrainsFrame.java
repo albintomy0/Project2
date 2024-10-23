@@ -105,8 +105,10 @@ public class SearchTrainsFrame extends JFrame {
         selectTrainButton.addActionListener(e -> {
             int selectedRow = trainTable.getSelectedRow();
             if (selectedRow != -1) {
-                String ticketId = tableModel.getValueAt(selectedRow, 0).toString();
-                JOptionPane.showMessageDialog(this, "Train selected: " + ticketId);
+                // Get the selected city from the table
+                String selectedCity = tableModel.getValueAt(selectedRow, 1).toString();
+                new BookTicketFrame(selectedCity);  // Pass the selected city to the BookTicketFrame
+                dispose();  // Close the current frame
             } else {
                 JOptionPane.showMessageDialog(this, "Please select a train.");
             }

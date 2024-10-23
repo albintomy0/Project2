@@ -4,27 +4,24 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 
 public class BookTicketFrame extends JFrame implements ActionListener {
 
-    private JComboBox<String> toDropdown;
+    private JLabel cityLabel;
     private JTextField dayField, monthField, yearField;
     private JSpinner ticketsSpinner;
     private JButton backButton, bookButton, quitButton;
     private JLabel titleLabel;
-    private String[] locations = {"Select", "Wellington", "Hamilton", "Tauranga", "Rotorua"};
 
-    public BookTicketFrame() {
+    public BookTicketFrame(String selectedCity) {  // Pass the selected city to this frame
         // Initialize components, panels, and action listeners
-        initComponents();
+        initComponents(selectedCity);
         initPanels();
         initActionListeners();
         setVisible(true);
     }
 
-    public void initComponents() {
+    public void initComponents(String selectedCity) {
         // Initialize the components
         backButton = new JButton("BACK");
         bookButton = new JButton("Book Ticket(s)");
@@ -46,8 +43,8 @@ public class BookTicketFrame extends JFrame implements ActionListener {
         // Spinner for tickets
         ticketsSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 10, 1));
 
-        // Destination dropdown
-        toDropdown = new JComboBox<>(locations);
+        // City label to show the selected city (instead of dropdown)
+        cityLabel = new JLabel(selectedCity);
 
         // Set frame properties
         setTitle("AUCKLAND TRAIN BOOKING SYSTEM");
@@ -90,7 +87,7 @@ public class BookTicketFrame extends JFrame implements ActionListener {
         gbc.gridy = 1;
         add(fromValueLabel, gbc);
 
-        // "To" label and dropdown
+        // "To" label and the selected city label
         JLabel toLabel = new JLabel("To:");
         gbc.gridx = 0;
         gbc.gridy = 2;
@@ -99,7 +96,7 @@ public class BookTicketFrame extends JFrame implements ActionListener {
         gbc.gridx = 1;
         gbc.gridy = 2;
         gbc.gridwidth = 2;
-        add(toDropdown, gbc);
+        add(cityLabel, gbc);  // Display the selected city as a label
 
         // Departure date label and fields
         JLabel dateLabel = new JLabel("Departure Date:");
@@ -113,7 +110,6 @@ public class BookTicketFrame extends JFrame implements ActionListener {
         datePanel.add(monthField);
         datePanel.add(yearField);
         datePanel.setBackground(new Color(192, 210, 238));  // Background color for panel
-        addDateFieldListeners();
 
         gbc.gridx = 1;
         gbc.gridy = 3;
@@ -145,14 +141,13 @@ public class BookTicketFrame extends JFrame implements ActionListener {
     public void initActionListeners() {
         // Add action listeners for buttons
         backButton.addActionListener(e -> {
-            GUIProject2 welcomeFrame = new GUIProject2();
-            welcomeFrame.setVisible(true);
+            new GUIProject2();
             setVisible(false);  // Hide current frame
         });
 
         bookButton.addActionListener(e -> {
             // Input validation
-            if (toDropdown.getSelectedIndex() == 0 || dayField.getText().equals("DD") || monthField.getText().equals("MM") || yearField.getText().equals("YYYY")) {
+            if (dayField.getText().equals("DD") || monthField.getText().equals("MM") || yearField.getText().equals("YYYY")) {
                 JOptionPane.showMessageDialog(this, "Please fill in all fields before booking.", "Incomplete Information", JOptionPane.WARNING_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(this, "Ticket(s) booked successfully!", "Booking Confirmed", JOptionPane.INFORMATION_MESSAGE);
@@ -162,32 +157,8 @@ public class BookTicketFrame extends JFrame implements ActionListener {
         quitButton.addActionListener(e -> System.exit(0));  // Exit the system
     }
 
-    private void addDateFieldListeners() {
-        addFocusListener(dayField, "DD");
-        addFocusListener(monthField, "MM");
-        addFocusListener(yearField, "YYYY");
-    }
-
-    private void addFocusListener(JTextField field, String placeholder) {
-        field.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                if (field.getText().equals(placeholder)) {
-                    field.setText("");
-                }
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                if (field.getText().isEmpty()) {
-                    field.setText(placeholder);
-                }
-            }
-        });
-    }
-
     public static void main(String[] args) {
-        BookTicketFrame bookTicketFrame = new BookTicketFrame(); // Launch the Book Ticket Frame
+        new BookTicketFrame("Wellington");  // Example of passing a city directly
     }
 
     @Override
