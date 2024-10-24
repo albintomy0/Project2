@@ -1,6 +1,5 @@
 package Project2GUIPackage;
 
-
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.table.DefaultTableModel;
@@ -12,7 +11,7 @@ public class SearchTrainsFrame extends JFrame {
     private DefaultTableModel tableModel;
     private JButton backButton, selectTrainButton, quitButton;
     private JComboBox<String> sortComboBox;  // Drop-down for sorting options
-    private JLabel titleLabel, sortLabel;
+    private JLabel titleLabel, sortLabel, statusLabel;
 
     public SearchTrainsFrame() {
         // Initialize components and set up frame
@@ -41,11 +40,26 @@ public class SearchTrainsFrame extends JFrame {
         sortComboBox = new JComboBox<>(new String[]{"City", "Price", "Time"});  // Sort options
         sortLabel = new JLabel("Sort by:");
 
+        // Set font and color for sort label and combo box
+        sortLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        sortLabel.setForeground(new Color(0, 102, 204));  // Dark blue color
+
+        sortComboBox.setFont(new Font("Arial", Font.PLAIN, 14));
+        sortComboBox.setBackground(new Color(224, 255, 255));  // Light cyan color
+        sortComboBox.setForeground(new Color(0, 51, 102));  // Navy blue font color
+        sortComboBox.setToolTipText("Sort available trains by city, price, or time.");
+        sortComboBox.setBorder(BorderFactory.createLineBorder(new Color(0, 102, 204)));
+
         // Table setup
         String[] columnNames = {"Train ID", "City", "Seats", "Price", "Time"};
         tableModel = new DefaultTableModel(columnNames, 0);
         trainTable = new JTable(tableModel);
         trainTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // Single selection
+
+        // Status label for feedback
+        statusLabel = new JLabel("");
+        statusLabel.setFont(new Font("Arial", Font.ITALIC, 12));
+        statusLabel.setForeground(new Color(0, 153, 76));  // Green color for success messages
 
         // Frame properties
         setTitle("AUCKLAND TRAIN BOOKING SYSTEM");
@@ -86,21 +100,22 @@ public class SearchTrainsFrame extends JFrame {
         gbc.gridy = 1;
         add(sortComboBox, gbc);
 
-        // Train table with scroll pane
+        // Train table with scroll pane - increase vertical space allocation
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.gridwidth = 4;  // Span across 4 columns for the table
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
+        gbc.weighty = 3.0;  // Increased weight to give the table more space
         JScrollPane scrollPane = new JScrollPane(trainTable);
         add(scrollPane, gbc);
 
-        // Select train button
+        // Select train button - reduce height allocation
         gbc.gridy = 3;
         gbc.gridwidth = 1;
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.CENTER;
+        gbc.weighty = 0.1;  // Reduced height allocation for buttons
         add(selectTrainButton, gbc);
 
         // Quit button
@@ -109,7 +124,15 @@ public class SearchTrainsFrame extends JFrame {
         gbc.gridwidth = 1;
         add(quitButton, gbc);
         quitButton.setBackground(new Color(255, 102, 102));  // Light red for "Quit"
+
+        // Status label
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.gridwidth = 3;
+        gbc.anchor = GridBagConstraints.WEST;
+        add(statusLabel, gbc);
     }
+
 
     public void initListeners() {
         // Add action listeners for buttons
@@ -174,8 +197,11 @@ public class SearchTrainsFrame extends JFrame {
                 tableModel.addRow(new Object[]{ticketId, city, seatNumber, price, time});
             }
 
+            // Update status label with success message
+            statusLabel.setText("Trains sorted by " + sortBy + " successfully.");
         } catch (SQLException e) {
             e.printStackTrace();
+            statusLabel.setText("Error loading train data.");
         } finally {
             // Close the database resources
             try {
