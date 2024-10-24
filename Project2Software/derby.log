@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Thu Oct 24 15:07:44 NZDT 2024 Thread[main,5,main] Cleanup action starting
 java.sql.SQLException: Failed to start database 'DBGUI2' with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@7aec35a, see the next exception for details.
 	at org.apache.derby.impl.jdbc.SQLExceptionFactory.getSQLException(Unknown Source)
@@ -203,3 +204,19 @@ ERROR XSDB6: Another instance of Derby may have already booted the database C:\U
 	at Project2GUIPackage.DBMain.main(DBMain.java:6)
 ============= end nested exception, level (2) ===========
 Cleanup action completed
+=======
+Wed Oct 23 16:33:40 NZDT 2024 : Apache Derby Network Server - 10.14.2.0 - (1828579) started and ready to accept connections on port 1527
+----------------------------------------------------------------
+Wed Oct 23 16:33:40 NZDT 2024:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-0192-b76f-f349-0000285616ff 
+on database directory C:\Users\Albin Tomy\Desktop\NetBeansProjects\PROJECT 2 FILES\GUI\Project2Software\DBGUI2 with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@30946e09 
+Loaded from file:/C:/Users/Albin%20Tomy/Downloads/db-derby-10.14.2.0-bin/lib/derby.jar
+java.vendor=Oracle Corporation
+java.runtime.version=11.0.22+9-LTS-219
+user.dir=C:\Users\Albin Tomy\Downloads\db-derby-10.14.2.0-bin
+os.name=Windows 10
+os.arch=amd64
+os.version=10.0
+derby.system.home=C:\Users\Albin Tomy\Desktop\NetBeansProjects\PROJECT 2 FILES\GUI\Project2Software
+Database Class Loader started - derby.database.classpath=''
+>>>>>>> origin/master
