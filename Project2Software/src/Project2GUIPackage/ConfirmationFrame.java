@@ -1,3 +1,5 @@
+package Project2GUIPackage;
+
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.table.DefaultTableModel;
@@ -68,8 +70,8 @@ public class ConfirmationFrame extends JFrame {
         confirmButton = new JButton("CONFIRM BOOKING");
         confirmButton.setBackground(Color.GREEN);
         backButton = new JButton("BACK");
-        backButton.setBackground(Color.YELLOW);
         cancelButton = new JButton("CANCEL BOOKING");
+        backButton.setBackground(new Color(192, 210, 238));  // Match background color
         cancelButton.setBackground(Color.RED);
     }
 
@@ -77,38 +79,45 @@ public class ConfirmationFrame extends JFrame {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
 
-        // Row 1 - Destination
+        // Row 0 - Back Button at the Top Left
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.WEST;
+        add(backButton, gbc);
+
+        // Row 1 - Destination
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.CENTER;
         add(toLabel, gbc);
 
-        gbc.gridx = 1;
+        gbc.gridx = 2;
         gbc.gridy = 0;
         add(toValueLabel, gbc);
 
         // Row 2 - Departure Date
-        gbc.gridx = 0;
+        gbc.gridx = 1;
         gbc.gridy = 1;
         add(departureDateLabel, gbc);
 
-        gbc.gridx = 1;
+        gbc.gridx = 2;
         gbc.gridy = 1;
         add(dateValueLabel, gbc);
 
         // Row 3 - Departure Time
-        gbc.gridx = 0;
+        gbc.gridx = 1;
         gbc.gridy = 2;
         add(departureTimeLabel, gbc);
 
-        gbc.gridx = 1;
+        gbc.gridx = 2;
         gbc.gridy = 2;
         add(timeValueLabel, gbc);
 
         // Row 4 - Ticket Table with Scroll Pane
         gbc.gridx = 0;
         gbc.gridy = 3;
-        gbc.gridwidth = 2;
+        gbc.gridwidth = 3;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
@@ -116,20 +125,20 @@ public class ConfirmationFrame extends JFrame {
         add(scrollPane, gbc);
 
         // Row 5 - Total
-        gbc.gridx = 0;
+        gbc.gridx = 1;
         gbc.gridy = 4;
         add(totalLabel, gbc);
 
-        gbc.gridx = 1;
+        gbc.gridx = 2;
         add(totalCostLabel, gbc);
 
-        // Row 6 - Buttons
+        // Row 6 - Buttons (centered) for confirm and cancel
         gbc.gridx = 0;
         gbc.gridy = 5;
-        gbc.gridwidth = 2;
+        gbc.gridwidth = 3;
         gbc.anchor = GridBagConstraints.CENTER;
         JPanel buttonPanel = new JPanel();
-        buttonPanel.add(backButton);
+        buttonPanel.setBackground(new Color(192, 210, 238));  // Match the background color
         buttonPanel.add(confirmButton);
         buttonPanel.add(cancelButton);
         add(buttonPanel, gbc);
@@ -168,7 +177,7 @@ public class ConfirmationFrame extends JFrame {
     // Format the date from yyyy-mm-dd to dd,mm,yyyy
     private String formatDate(String departureDate) {
         String[] parts = departureDate.split("-");
-        return parts[2] + "," + parts[1] + "," + parts[0];  // dd,mm,yyyy format
+        return parts[2] + "-" + parts[1] + "-" + parts[0];  // dd,mm,yyyy format
     }
 
     // Fetch the departure time from the database based on the TICKET_ID

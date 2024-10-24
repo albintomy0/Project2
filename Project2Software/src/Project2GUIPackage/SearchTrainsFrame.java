@@ -1,3 +1,6 @@
+package Project2GUIPackage;
+
+
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.table.DefaultTableModel;

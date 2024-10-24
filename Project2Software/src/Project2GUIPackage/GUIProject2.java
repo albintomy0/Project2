@@ -1,3 +1,5 @@
+package Project2GUIPackage;
+
 import javax.swing.*;
 import java.awt.*;
 
