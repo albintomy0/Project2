@@ -2,215 +2,124 @@ package Project2GUIPackage;
 
 import javax.swing.*;
 import java.awt.*;
-import javax.swing.table.DefaultTableModel;
-import java.sql.*;
+import java.sql.SQLException;
 
 public class SearchTrainsFrame extends JFrame {
 
-    private JTable trainTable;
-    private DefaultTableModel tableModel;
-    private JButton backButton, selectTrainButton, quitButton;
-    private JComboBox<String> sortComboBox;  // Drop-down for sorting options
-    private JLabel titleLabel, sortLabel, statusLabel;
+    private TrainTablePanel trainTablePanel;  // Separate class for the train table
+    private SortPanel sortPanel;  // Separate class for sorting options
+    private ButtonPanel buttonPanel;  // Separate class for buttons
+    private JLabel statusLabel;
+    private TrainDataModel trainDataModel;  // Model for database operations
 
     public SearchTrainsFrame() {
-        // Initialize components and set up frame
+        trainDataModel = new TrainDataModel();  // Initialize the model
+
+        // Initialize components
         initComponents();
-        initPanels();
         initListeners();
-        loadTrainDataFromDB("CITY");  // Load train data sorted by city by default
+
+        // Load initial train data (sorted by city)
+        loadTrainData("CITY");
+
         setVisible(true);
     }
 
-    public void initComponents() {
-        // Initialize buttons
-        backButton = new JButton("BACK");
-        selectTrainButton = new JButton("Select Train");
-        quitButton = new JButton("Quit");
+    // Initialize UI components
+    private void initComponents() {
+        trainTablePanel = new TrainTablePanel();
+        sortPanel = new SortPanel();
+        buttonPanel = new ButtonPanel();
 
-        backButton.setToolTipText("Go back to the main menu.");
-        selectTrainButton.setToolTipText("Select the train you want.");
-        quitButton.setToolTipText("Exit the system.");
-
-        // Title label
-        titleLabel = new JLabel("AVAILABLE TRAINS", SwingConstants.CENTER); // Centering the label text
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
-
-        // ComboBox for sorting
-        sortComboBox = new JComboBox<>(new String[]{"City", "Price", "Time"});  // Sort options
-        sortLabel = new JLabel("Sort by:");
-
-        // Set font and color for sort label and combo box
-        sortLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        sortLabel.setForeground(new Color(0, 102, 204));  // Dark blue color
-
-        sortComboBox.setFont(new Font("Arial", Font.PLAIN, 14));
-        sortComboBox.setBackground(new Color(224, 255, 255));  // Light cyan color
-        sortComboBox.setForeground(new Color(0, 51, 102));  // Navy blue font color
-        sortComboBox.setToolTipText("Sort available trains by city, price, or time.");
-        sortComboBox.setBorder(BorderFactory.createLineBorder(new Color(0, 102, 204)));
-
-        // Table setup
-        String[] columnNames = {"Train ID", "City", "Seats", "Price", "Time"};
-        tableModel = new DefaultTableModel(columnNames, 0);
-        trainTable = new JTable(tableModel);
-        trainTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // Single selection
-
-        // Status label for feedback
+        // Status label
         statusLabel = new JLabel("");
         statusLabel.setFont(new Font("Arial", Font.ITALIC, 12));
-        statusLabel.setForeground(new Color(0, 153, 76));  // Green color for success messages
+        statusLabel.setForeground(new Color(0, 153, 76));
 
         // Frame properties
         setTitle("AUCKLAND TRAIN BOOKING SYSTEM");
-        setSize(600, 450);  // Adjusted to accommodate sort options
+        setSize(600, 450);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new GridBagLayout());
         setResizable(false);
         setLocationRelativeTo(null);  // Center the frame
-        getContentPane().setBackground(new Color(192, 210, 238));  // Set background color to light blue
-    }
+        getContentPane().setBackground(new Color(192, 210, 238));
 
-    public void initPanels() {
-        // Set up layout and positioning
+        // Organize the layout with GridBagLayout
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Back button
+        // Add the sort panel
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 1;
-        add(backButton, gbc);
+        add(sortPanel, gbc);
 
-        // Title label - span across all columns to center
+        // Add the train table
         gbc.gridx = 0;
-        gbc.gridy = 0;
+        gbc.gridy = 1;
         gbc.gridwidth = 3;
-        gbc.anchor = GridBagConstraints.CENTER;
-        add(titleLabel, gbc);
-
-        // Sort label and combo box
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.gridwidth = 1;
-        add(sortLabel, gbc);
-
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        add(sortComboBox, gbc);
-
-        // Train table with scroll pane - increase vertical space allocation
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.gridwidth = 4;  // Span across 4 columns for the table
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1.0;
-        gbc.weighty = 3.0;  // Increased weight to give the table more space
-        JScrollPane scrollPane = new JScrollPane(trainTable);
-        add(scrollPane, gbc);
+        gbc.weighty = 3.0;
+        add(trainTablePanel, gbc);
 
-        // Select train button - reduce height allocation
+        // Add the button panel
+        gbc.gridy = 2;
+        gbc.weighty = 0.1;
+        add(buttonPanel, gbc);
+
+        // Add status label
         gbc.gridy = 3;
-        gbc.gridwidth = 1;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.anchor = GridBagConstraints.CENTER;
-        gbc.weighty = 0.1;  // Reduced height allocation for buttons
-        add(selectTrainButton, gbc);
-
-        // Quit button
-        gbc.gridx = 2;
-        gbc.gridy = 3;
-        gbc.gridwidth = 1;
-        add(quitButton, gbc);
-        quitButton.setBackground(new Color(255, 102, 102));  // Light red for "Quit"
-
-        // Status label
-        gbc.gridx = 0;
-        gbc.gridy = 4;
-        gbc.gridwidth = 3;
-        gbc.anchor = GridBagConstraints.WEST;
+        gbc.weighty = 0;
         add(statusLabel, gbc);
     }
 
-
-    public void initListeners() {
-        // Add action listeners for buttons
-        backButton.addActionListener(e -> {
+    // Initialize listeners for buttons and sorting
+    private void initListeners() {
+        buttonPanel.getBackButton().addActionListener(e -> {
             new GUIProject2();
-            dispose();  // Close current window
+            dispose();
         });
 
-        selectTrainButton.addActionListener(e -> {
-            int selectedRow = trainTable.getSelectedRow();
+        buttonPanel.getSelectTrainButton().addActionListener(e -> {
+            int selectedRow = trainTablePanel.getSelectedRow();
             if (selectedRow != -1) {
-                // Get the selected train details (TICKET_ID and City) from the table
-                String selectedTicketID = tableModel.getValueAt(selectedRow, 0).toString();  // Get TICKET_ID
-                String selectedCity = tableModel.getValueAt(selectedRow, 1).toString();  // Get City
+                // Get selected train details
+                String selectedTicketID = trainTablePanel.getValueAt(selectedRow, 0);
+                String selectedCity = trainTablePanel.getValueAt(selectedRow, 1);
 
-                // Pass the selected TICKET_ID and City to the BookTicketFrame
+                // Open booking window
                 new BookTicketFrame(selectedCity, selectedTicketID);
-                dispose();  // Close the current frame
+                dispose();
             } else {
                 JOptionPane.showMessageDialog(this, "Please select a train.");
             }
         });
 
-        quitButton.addActionListener(e -> System.exit(0));  // Exit the system
+        buttonPanel.getQuitButton().addActionListener(e -> System.exit(0));
 
-        // Add action listener for sorting
-        sortComboBox.addActionListener(e -> {
-            String selectedSortOption = sortComboBox.getSelectedItem().toString().toUpperCase();
-            loadTrainDataFromDB(selectedSortOption);  // Reload data based on the selected sort option
+        sortPanel.addSortListener(e -> {
+            String selectedSortOption = sortPanel.getSelectedSortOption();
+            loadTrainData(selectedSortOption);
         });
     }
 
-    // Load data from the TRAINDATA table in the Derby database, with sorting based on the parameter
-    private void loadTrainDataFromDB(String sortBy) {
-        Connection conn = null;
-        Statement stmt = null;
-        ResultSet rs = null;
-
+    // Load train data based on sorting selection
+    private void loadTrainData(String sortBy) {
         try {
-            // Establish a connection to the database
-            conn = DriverManager.getConnection("jdbc:derby://localhost:1527/DBGUI2", "app", "app");
+            Object[][] trainData = trainDataModel.getSortedTrainData(sortBy);
+            trainTablePanel.clearTable();  // Clear table before adding new rows
 
-            // Create a statement
-            stmt = conn.createStatement();
-
-            // Sort by city, price, or time based on the user's choice
-            String sql = "SELECT * FROM TRAINDATA ORDER BY " + sortBy;
-            rs = stmt.executeQuery(sql);
-
-            // Clear the current table data
-            tableModel.setRowCount(0);
-
-            // Loop through the result set and add rows to the table model
-            while (rs.next()) {
-                String ticketId = rs.getString("TICKET_ID");
-                String city = rs.getString("CITY");
-                int seatNumber = rs.getInt("SEAT_NUMBER");
-                double price = rs.getDouble("PRICE");
-                String time = rs.getString("TIME");
-
-                // Add each train's data as a row in the table
-                tableModel.addRow(new Object[]{ticketId, city, seatNumber, price, time});
+            for (Object[] row : trainData) {
+                trainTablePanel.addRow(row);  // Add new data to the table
             }
 
-            // Update status label with success message
             statusLabel.setText("Trains sorted by " + sortBy + " successfully.");
         } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error loading train data.", "Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
-            statusLabel.setText("Error loading train data.");
-        } finally {
-            // Close the database resources
-            try {
-                if (rs != null) rs.close();
-                if (stmt != null) stmt.close();
-                if (conn != null) conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
     }
 

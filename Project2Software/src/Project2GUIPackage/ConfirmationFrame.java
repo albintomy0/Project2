@@ -34,6 +34,7 @@ public class ConfirmationFrame extends JFrame {
         setVisible(true);
     }
 
+    // Initialize all components and setup GUI properties
     private void initComponents() {
         setTitle("Confirm Ticket");
         setSize(700, 450);  
@@ -41,7 +42,7 @@ public class ConfirmationFrame extends JFrame {
         setLayout(new GridBagLayout());
         setResizable(false);
         setLocationRelativeTo(null);  
-        getContentPane().setBackground(new Color(192, 210, 238));
+        getContentPane().setBackground(new Color(192, 210, 238)); // Light blue background
 
         // Labels for values
         toLabel = new JLabel("Auckland to:");
@@ -79,7 +80,7 @@ public class ConfirmationFrame extends JFrame {
             }
         });
 
-        // Add ticket data
+        // Add ticket data to the table
         addTicketRow("Adult", selectedTicketID, adultTickets, false);
         addTicketRow("Child", selectedTicketID, childTickets, true);
 
@@ -93,20 +94,21 @@ public class ConfirmationFrame extends JFrame {
 
         // Buttons
         confirmButton = new JButton("CONFIRM BOOKING");
-        confirmButton.setBackground(new Color(0, 128, 0));
+        confirmButton.setBackground(new Color(0, 128, 0)); // Dark green
         confirmButton.setForeground(Color.WHITE);
         confirmButton.setToolTipText("Click to confirm your booking.");
 
         cancelButton = new JButton("CANCEL BOOKING");
-        cancelButton.setBackground(new Color(255, 0, 0));
+        cancelButton.setBackground(new Color(255, 0, 0)); // Red
         cancelButton.setForeground(Color.WHITE);
         cancelButton.setToolTipText("Click to cancel the booking.");
 
         backButton = new JButton("BACK");
-        backButton.setBackground(new Color(192, 210, 238));
+        backButton.setBackground(new Color(192, 210, 238)); // Same as background
         backButton.setToolTipText("Go back to the previous screen.");
     }
 
+    // Setup the layout and organize components into panels
     private void initPanels() {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
@@ -174,6 +176,7 @@ public class ConfirmationFrame extends JFrame {
         setActionListeners();
     }
 
+    // Set action listeners for the buttons
     private void setActionListeners() {
         // Back button
         backButton.addActionListener(e -> {
@@ -199,6 +202,7 @@ public class ConfirmationFrame extends JFrame {
         });
     }
 
+    // Add rows to the ticket table based on the type of ticket (Adult/Child)
     private void addTicketRow(String type, String ticketID, int numTickets, boolean isChild) {
         double price = isChild ? 0.0 : fetchPriceValue(ticketID);
         double totalCost = calculateTotalCost(numTickets, childTickets, price);
@@ -206,11 +210,13 @@ public class ConfirmationFrame extends JFrame {
         tableModel.addRow(rowData);
     }
 
+    // Format date from yyyy-mm-dd to dd-mm-yyyy
     private String formatDate(String departureDate) {
         String[] parts = departureDate.split("-");
         return parts[2] + "-" + parts[1] + "-" + parts[0];
     }
 
+    // Fetch departure time from the database based on the ticket ID
     private String fetchDepartureTime(String ticketID) {
         try (Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/DBGUI2", "app", "app");
              Statement stmt = conn.createStatement()) {
@@ -224,6 +230,7 @@ public class ConfirmationFrame extends JFrame {
         return "";
     }
 
+    // Fetch the price of the ticket from the database based on the ticket ID
     private double fetchPriceValue(String ticketID) {
         try (Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/DBGUI2", "app", "app");
              Statement stmt = conn.createStatement()) {
@@ -237,6 +244,7 @@ public class ConfirmationFrame extends JFrame {
         return 0;
     }
 
+    // Calculate total cost for a ticket type (either adult or child)
     private double calculateTotalCost(int tickets, int childTickets1, double unitPrice) {
         return tickets * unitPrice;
     }
