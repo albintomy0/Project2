@@ -1,0 +1,12 @@
+T003,Wellington,100,45.00,07:45
+T002,Hamilton,100,25.00,09:30
+T004,Tauranga,80,40.00,10:15
+T006,Hamilton,80,30.00,11:00
+T005,Rotorua,80,50.00,12:00
+T007,Wellington,100,50.00,13:00
+T008,Tauranga,80,42.00,14:00
+T009,Rotorua,100,55.00,15:30
+T010,Hamilton,80,28.00,16:00
+T011,Wellington,70,48.00,17:45
+T012,Tauranga,70,43.00,19:15
+T013,Rotorua,80,60.00,20:00

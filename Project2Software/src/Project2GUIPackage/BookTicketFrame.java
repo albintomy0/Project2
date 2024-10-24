@@ -4,30 +4,36 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.Year;
 
 public class BookTicketFrame extends JFrame implements ActionListener {
 
     private JLabel cityLabel;
-    private JTextField dayField, monthField, yearField;
-    private JSpinner ticketsSpinner;
+    private JComboBox<String> dayComboBox, monthComboBox, yearComboBox;
+    private JSpinner adultTicketsSpinner, childTicketsSpinner;
     private JButton backButton, bookButton, quitButton;
     private JLabel titleLabel;
 
-    public BookTicketFrame(String selectedCity) {  // Pass the selected city to this frame
+    private String selectedCity;  // Store the selected city
+    private String selectedTicketID;  // Store the selected TICKET_ID
+
+    public BookTicketFrame(String selectedCity, String selectedTicketID) {  // Pass the selected city and ticket ID to this frame
+        this.selectedCity = selectedCity;  // Store the selected city
+        this.selectedTicketID = selectedTicketID;  // Store the selected TICKET_ID
         // Initialize components, panels, and action listeners
-        initComponents(selectedCity);
+        initComponents();
         initPanels();
         initActionListeners();
         setVisible(true);
     }
 
-    public void initComponents(String selectedCity) {
+    public void initComponents() {
         // Initialize the components
         backButton = new JButton("BACK");
         bookButton = new JButton("Book Ticket(s)");
         quitButton = new JButton("Quit");
 
-        backButton.setToolTipText("Go back to the main menu.");
+        backButton.setToolTipText("Go back to the search trains screen.");
         bookButton.setToolTipText("Proceed with booking the ticket.");
         quitButton.setToolTipText("Exit the system.");
 
@@ -35,13 +41,26 @@ public class BookTicketFrame extends JFrame implements ActionListener {
         titleLabel = new JLabel("BOOK TICKET");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
 
-        // Date fields
-        dayField = new JTextField("DD", 2);
-        monthField = new JTextField("MM", 2);
-        yearField = new JTextField("YYYY", 4);
+        // Dropdown for day, month, and year (from 1st December onwards)
+        String[] days = new String[31];
+        for (int i = 1; i <= 31; i++) {
+            days[i - 1] = String.format("%02d", i);
+        }
+        dayComboBox = new JComboBox<>(days);
 
-        // Spinner for tickets
-        ticketsSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 10, 1));
+        // Initially set the month dropdown to only show December
+        monthComboBox = new JComboBox<>(new String[]{"12"});
+
+        int currentYear = Year.now().getValue();
+        String[] years = new String[10];
+        for (int i = 0; i < 10; i++) {
+            years[i] = String.valueOf(currentYear + i);  // Upcoming 10 years
+        }
+        yearComboBox = new JComboBox<>(years);
+
+        // Spinner for adult and child tickets (starting from 0)
+        adultTicketsSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 10, 1));  // Adult tickets start from 0
+        childTicketsSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 10, 1));  // Child tickets start from 0
 
         // City label to show the selected city (instead of dropdown)
         cityLabel = new JLabel(selectedCity);
@@ -98,17 +117,17 @@ public class BookTicketFrame extends JFrame implements ActionListener {
         gbc.gridwidth = 2;
         add(cityLabel, gbc);  // Display the selected city as a label
 
-        // Departure date label and fields
+        // Departure date label and fields (drop-down combo boxes for date)
         JLabel dateLabel = new JLabel("Departure Date:");
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.gridwidth = 1;
         add(dateLabel, gbc);
 
-        JPanel datePanel = new JPanel();
-        datePanel.add(dayField);
-        datePanel.add(monthField);
-        datePanel.add(yearField);
+        JPanel datePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        datePanel.add(dayComboBox);
+        datePanel.add(monthComboBox);
+        datePanel.add(yearComboBox);
         datePanel.setBackground(new Color(192, 210, 238));  // Background color for panel
 
         gbc.gridx = 1;
@@ -116,23 +135,35 @@ public class BookTicketFrame extends JFrame implements ActionListener {
         gbc.gridwidth = 2;
         add(datePanel, gbc);
 
-        // Number of tickets label and spinner
-        JLabel ticketsLabel = new JLabel("No. of tickets:");
+        // Number of adult tickets label and spinner
+        JLabel adultTicketsLabel = new JLabel("Adult Tickets: (>13)");
         gbc.gridx = 0;
         gbc.gridy = 4;
-        add(ticketsLabel, gbc);
+        add(adultTicketsLabel, gbc);
 
-        gbc.gridx = 1;
+        gbc.gridx = 2;
         gbc.gridy = 4;
-        add(ticketsSpinner, gbc);
+        add(adultTicketsSpinner, gbc);
+
+        // Number of child tickets label and spinner
+        JLabel childTicketsLabel = new JLabel("Child Tickets: (<13)  (free)");
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        add(childTicketsLabel, gbc);
+
+        gbc.gridx = 2;
+        gbc.gridy = 5;
+        add(childTicketsSpinner, gbc);
 
         // Buttons at the bottom
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        quitButton.setBackground(Color.RED);  // Red color for quit button
+        quitButton.setForeground(Color.WHITE);  // White text for visibility
         buttonPanel.add(quitButton);
         buttonPanel.add(bookButton);
         buttonPanel.setBackground(new Color(192, 210, 238));  // Background color for button panel
         gbc.gridx = 1;
-        gbc.gridy = 5;
+        gbc.gridy = 6;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         add(buttonPanel, gbc);
@@ -141,28 +172,51 @@ public class BookTicketFrame extends JFrame implements ActionListener {
     public void initActionListeners() {
         // Add action listeners for buttons
         backButton.addActionListener(e -> {
-            new GUIProject2();
+            new SearchTrainsFrame();  // Go back to the search trains screen
             setVisible(false);  // Hide current frame
         });
 
-        bookButton.addActionListener(e -> {
-            // Input validation
-            if (dayField.getText().equals("DD") || monthField.getText().equals("MM") || yearField.getText().equals("YYYY")) {
-                JOptionPane.showMessageDialog(this, "Please fill in all fields before booking.", "Incomplete Information", JOptionPane.WARNING_MESSAGE);
+        // Year selection changes the available months
+        yearComboBox.addActionListener(e -> {
+            String selectedYear = yearComboBox.getSelectedItem().toString();
+            if (selectedYear.equals("2024")) {
+                // If 2024 is selected, only show December
+                monthComboBox.setModel(new DefaultComboBoxModel<>(new String[]{"12"}));
             } else {
-                JOptionPane.showMessageDialog(this, "Ticket(s) booked successfully!", "Booking Confirmed", JOptionPane.INFORMATION_MESSAGE);
+                // For any year greater than 2024, show all months
+                String[] allMonths = new String[12];
+                for (int i = 1; i <= 12; i++) {
+                    allMonths[i - 1] = String.format("%02d", i);
+                }
+                monthComboBox.setModel(new DefaultComboBoxModel<>(allMonths));
+            }
+        });
+
+        // When "Book Ticket" button is clicked, open ConfirmationFrame
+        bookButton.addActionListener(e -> {
+            String departureDate = yearComboBox.getSelectedItem() + "-" + monthComboBox.getSelectedItem() + "-" + dayComboBox.getSelectedItem();
+            int childTickets = (int) childTicketsSpinner.getValue();
+            int adultTickets = (int) adultTicketsSpinner.getValue();
+
+            // Validation: Ensure at least one ticket is selected
+            if (childTickets == 0 && adultTickets == 0) {
+                JOptionPane.showMessageDialog(this, "Please select at least one ticket.", "Invalid Input", JOptionPane.WARNING_MESSAGE);
+            } else {
+                // Pass the TICKET_ID, selected city, and other info to the ConfirmationFrame
+                new ConfirmationFrame(selectedCity, selectedTicketID, departureDate, childTickets, adultTickets);
+                setVisible(false);  // Hide the current frame
             }
         });
 
         quitButton.addActionListener(e -> System.exit(0));  // Exit the system
     }
 
-    public static void main(String[] args) {
-        new BookTicketFrame("Wellington");  // Example of passing a city directly
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public static void main(String[] args) {
+        new BookTicketFrame("Wellington", "T003");  // Example of passing a city and ticket ID directly
     }
 }
