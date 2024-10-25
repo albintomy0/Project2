@@ -16,5 +16,9 @@ public class TicketBookingModel {
         // Validate that at least one ticket is selected (either adult or child)
         return adultTickets > 0 || childTickets > 0;
     }
+
+    double calculateTotalCost(int i, int i0, double d) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }
 
