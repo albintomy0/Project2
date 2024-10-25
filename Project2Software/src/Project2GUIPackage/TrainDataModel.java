@@ -14,7 +14,7 @@ public class TrainDataModel {
 
         try {
             // Establish connection to the database
-            conn = DriverManager.getConnection("jdbc:derby://localhost:1527/DBGUI2", "app", "app");
+            conn = DriverManager.getConnection("jdbc:derby://localhost:1527/DBGUI", "app", "app");
             stmt = conn.createStatement();
 
             // SQL query to fetch sorted data
@@ -31,7 +31,7 @@ public class TrainDataModel {
                     rs.getString("TIME")
                 };
                 trainDataList.add(row);
-            }
+            }   
 
             return trainDataList.toArray(new Object[0][]);  // Convert ArrayList to 2D array
 
