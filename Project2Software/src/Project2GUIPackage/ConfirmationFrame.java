@@ -19,6 +19,7 @@ public class ConfirmationFrame extends JFrame {
     private String selectedTicketID;
     private String departureDate;
     private int childTickets, adultTickets;
+    private double totalCost;
 
     public ConfirmationFrame(String destination, String ticketID, String departureDate, int childTickets, int adultTickets) {
         // Store values passed from BookTicketFrame
@@ -37,20 +38,20 @@ public class ConfirmationFrame extends JFrame {
     // Initialize all components and setup GUI properties
     private void initComponents() {
         setTitle("Confirm Ticket");
-        setSize(700, 450);  
+        setSize(700, 450);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new GridBagLayout());
         setResizable(false);
-        setLocationRelativeTo(null);  
+        setLocationRelativeTo(null);
         getContentPane().setBackground(new Color(192, 210, 238)); // Light blue background
 
         // Labels for values
         toLabel = new JLabel("Auckland to:");
         toLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-        
+
         departureDateLabel = new JLabel("Departure Date:");
         departureDateLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-        
+
         departureTimeLabel = new JLabel("Departure Time:");
         departureTimeLabel.setFont(new Font("Arial", Font.PLAIN, 14));
 
@@ -65,7 +66,7 @@ public class ConfirmationFrame extends JFrame {
         ticketTable = new JTable(tableModel);
         ticketTable.setRowHeight(25);
         ticketTable.setFillsViewportHeight(true);
-        
+
         // Alternating row colors for better readability
         ticketTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
             @Override
@@ -87,7 +88,7 @@ public class ConfirmationFrame extends JFrame {
         // Total cost label
         totalLabel = new JLabel("TOTAL: $ ");
         totalLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        double totalCost = calculateTotalCost(adultTickets, childTickets, fetchPriceValue(selectedTicketID));
+        totalCost = calculateTotalCost(adultTickets, childTickets, fetchPriceValue(selectedTicketID));
         totalCostLabel = new JLabel(String.valueOf(totalCost));
         totalCostLabel.setFont(new Font("Arial", Font.BOLD, 14));
         totalCostLabel.setForeground(Color.RED);
@@ -188,7 +189,7 @@ public class ConfirmationFrame extends JFrame {
         cancelButton.addActionListener(e -> {
             int response = JOptionPane.showConfirmDialog(this, "Are you sure you want to cancel the booking?", "Cancel Booking", JOptionPane.YES_NO_OPTION);
             if (response == JOptionPane.YES_OPTION) {
-                new GUIProject2();  
+                new GUIProject2();
                 setVisible(false);
             }
         });
@@ -197,7 +198,10 @@ public class ConfirmationFrame extends JFrame {
         confirmButton.addActionListener(e -> {
             int response = JOptionPane.showConfirmDialog(this, "Do you want to confirm the booking?", "Confirm Booking", JOptionPane.YES_NO_OPTION);
             if (response == JOptionPane.YES_OPTION) {
-                JOptionPane.showMessageDialog(this, "Booking confirmed!");
+                // Move to ReceiptFrame after confirmation
+                ReceiptModel receiptModel = new ReceiptModel(selectedCity, departureDate, fetchDepartureTime(selectedTicketID), selectedTicketID, adultTickets, childTickets, totalCost);
+                new ReceiptFrame(receiptModel);
+                setVisible(false);
             }
         });
     }
@@ -218,7 +222,7 @@ public class ConfirmationFrame extends JFrame {
 
     // Fetch departure time from the database based on the ticket ID
     private String fetchDepartureTime(String ticketID) {
-        try (Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/DBGUI2", "app", "app");
+        try (Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/DBGUI", "app", "app");
              Statement stmt = conn.createStatement()) {
             ResultSet rs = stmt.executeQuery("SELECT TIME FROM TRAINDATA WHERE TICKET_ID = '" + ticketID + "'");
             if (rs.next()) {
@@ -232,7 +236,7 @@ public class ConfirmationFrame extends JFrame {
 
     // Fetch the price of the ticket from the database based on the ticket ID
     private double fetchPriceValue(String ticketID) {
-        try (Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/DBGUI2", "app", "app");
+        try (Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/DBGUI", "app", "app");
              Statement stmt = conn.createStatement()) {
             ResultSet rs = stmt.executeQuery("SELECT PRICE FROM TRAINDATA WHERE TICKET_ID = '" + ticketID + "'");
             if (rs.next()) {
